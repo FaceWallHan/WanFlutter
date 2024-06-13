@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:wan_android/utils/route_util.dart';
 
 import 'widget/base/base_widget.dart';
 
@@ -19,6 +20,7 @@ class MainApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: BaseWidget(),
+      getPages: RouteUtil.routeTableList,
     );
   }
 }

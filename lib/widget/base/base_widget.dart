@@ -16,19 +16,6 @@ class BaseWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Obx(() => Text(_title.value)),
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-                onPressed: () {
-                  Scaffold.of(context).openDrawer();
-                },
-                icon: const Icon(Icons.menu));
-          },
-        ),
-        backgroundColor: Consts.mainColor,
-      ),
       body: _widgetArr.first,
       bottomNavigationBar: BottomNavigationBarDelegate(
         titleCallback: (index) {

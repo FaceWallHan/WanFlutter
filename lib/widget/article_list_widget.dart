@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:wan_android/utils/route_util.dart';
 
 import 'package:wan_android/utils/time_utils.dart';
 
@@ -54,7 +56,9 @@ class ArticleListWidget extends StatelessWidget {
             const Spacer(),
             IconButton(
                 padding: EdgeInsets.zero,
-                onPressed: () {},
+                onPressed: () {
+                  Get.toNamed(RouteAction.login.name);
+                },
                 icon: Icon(
                   item.collect ? Icons.favorite : Icons.favorite_border,
                   color: Colors.red,
@@ -76,4 +80,37 @@ class ArticleListWidget extends StatelessWidget {
               ),
             )
           : const SizedBox.shrink();
+}
+
+class ArticleListBinding implements Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<ArticleListController>(() => ArticleListController());
+  }
+}
+
+class ArticleListController extends GetxController {
+  // 在控制器中定义参数
+  late final ArticleDataItem item;
+
+  @override
+  void onInit() {
+    // 接收参数
+    item = Get.arguments;
+    super.onInit();
+  }
+}
+
+class ArticleListPage extends StatelessWidget {
+  const ArticleListPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return GetBuilder<ArticleListController>(
+      builder: (controller) {
+        // 使用控制器中的参数构建页面内容
+        return ArticleListWidget(item: controller.item);
+      },
+    );
+  }
 }

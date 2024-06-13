@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import 'package:wan_android/widget/banner/main_banner.dart';
 
+import '../consts.dart';
 import '../entity/home_article_item.dart';
 import '../viewmodel/home_view_model.dart';
 import 'article_list_widget.dart';
@@ -46,6 +47,20 @@ class HomeWidget extends StatelessWidget {
     return CustomScrollView(
       controller: _scrollController,
       slivers: [
+        SliverAppBar(
+          title: Text(Consts.itemList.first.value),
+          floating: true,
+          leading: Builder(
+            builder: (BuildContext context) {
+              return IconButton(
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                  icon: const Icon(Icons.menu));
+            },
+          ),
+          backgroundColor: Consts.mainColor,
+        ),
         SliverToBoxAdapter(
           child: MainBanner(),
         ),
