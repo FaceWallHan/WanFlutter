@@ -17,6 +17,8 @@ class Consts {
   ];
 
   static const bannerUrl = "banner/json";
+  static const registerUrl = "user/register";
+  static const loginUrl = "user/login";
 
   static String getArticleUrl(int page) => "article/list/$page/json";
 }

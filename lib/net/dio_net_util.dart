@@ -23,9 +23,13 @@ class DioClient {
       }));
   }
 
-  Future<ApiResponse<T>> get<T>(String url,
-      {Map<String, dynamic>? queryParameters,
-      required T Function(dynamic) fromJsonT}) async {
+  Dio get dioClient => _dio;
+
+  Future<ApiResponse<T>> get<T>(
+    String url, {
+    Map<String, dynamic>? queryParameters,
+    required T Function(dynamic) fromJsonT,
+  }) async {
     try {
       Response response = await _dio.get(url, queryParameters: queryParameters);
       return _handleResponse<T>(response, fromJsonT);
@@ -35,10 +39,12 @@ class DioClient {
   }
 
   Future<ApiResponse<T>> post<T>(String url,
-      {Map<String, dynamic>? data,
-      required T Function(dynamic) fromJsonT}) async {
+      {Map<String, dynamic>? queryParameters,
+      required T Function(dynamic) fromJsonT,
+      bool showLoading = false}) async {
     try {
-      Response response = await _dio.post(url, data: data);
+      Response response =
+          await _dio.post(url, queryParameters: queryParameters);
       return _handleResponse<T>(response, fromJsonT);
     } catch (e) {
       rethrow;

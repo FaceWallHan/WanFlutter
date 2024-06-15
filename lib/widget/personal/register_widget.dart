@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:wan_android/net/request/register_request.dart';
+import 'package:wan_android/utils/toast_utils.dart';
 
 import '../../consts.dart';
 import '../../utils/route_util.dart';
 
-class RegisterWidget extends StatelessWidget {
-  RegisterWidget({super.key});
-
+class RegisterWidget extends StatefulWidget {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _pwdController = TextEditingController();
   final _againPwdController = TextEditingController();
+
+  RegisterWidget({super.key});
+
+  @override
+  State<RegisterWidget> createState() => _RegisterWidgetState();
+}
+
+class _RegisterWidgetState extends State<RegisterWidget> {
+  var registerEnabled = true;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +45,7 @@ class RegisterWidget extends StatelessWidget {
               ),
               const Text("用户注册后才可以登录！",
                   style: TextStyle(fontSize: Consts.textFontSize)),
-              inflateForm(),
+              inflateForm(context),
               goRegister(),
             ],
           ),
@@ -45,17 +54,39 @@ class RegisterWidget extends StatelessWidget {
     );
   }
 
+  void register() async {
+    final user = widget._usernameController.text;
+    final pwd = widget._pwdController.text;
+    final rePwd = widget._againPwdController.text;
+
+    RegisterRequest({
+      "username": user,
+      "password": pwd,
+      "repassword": rePwd,
+    }, false, (v) {
+      Get.offNamed(RouteAction.login.name,
+          arguments: {"username": user, "password": pwd});
+      showToast("注册成功");
+    }, (e) {
+      showToast(e.errorMsg);
+    }, () {
+      registerEnabled = true;
+    }, () {
+      registerEnabled = false;
+    });
+  }
+
   Padding inflateSubmitButton() => Padding(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
         child: Row(
           children: [
             Expanded(
                 child: ElevatedButton(
-              onPressed: () {
-                if (!_formKey.currentState!.validate()) {
-                  return;
-                }
-              },
+              onPressed: () => registerEnabled
+                  ? {
+                      if (widget._formKey.currentState!.validate()) {register()}
+                    }
+                  : null,
               style:
                   ElevatedButton.styleFrom(backgroundColor: Consts.mainColor),
               child: const Padding(
@@ -70,32 +101,35 @@ class RegisterWidget extends StatelessWidget {
         ),
       );
 
-  Form inflateForm() => Form(
-      key: _formKey,
+  Form inflateForm(BuildContext context) => Form(
+      key: widget._formKey,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       child: Flex(
         direction: Axis.vertical,
         children: [
           TextFormField(
-            controller: _usernameController,
+            controller: widget._usernameController,
             decoration: const InputDecoration(
                 labelText: "用户名", hintText: "用户名", icon: Icon(Icons.person)),
             validator: (value) => value!.trim().length > 5 ? null : "用户名不能少于6位",
           ),
           TextFormField(
-              controller: _pwdController,
+              controller: widget._pwdController,
+              obscureText: true,
               decoration: const InputDecoration(
                   labelText: "密码", hintText: "密码", icon: Icon(Icons.lock)),
               validator: (value) =>
                   value!.trim().length > 5 ? null : "密码不能少于6位"),
           TextFormField(
-              controller: _pwdController,
+              obscureText: true,
+              controller: widget._againPwdController,
               decoration: const InputDecoration(
                   labelText: "再输入一次密码",
                   hintText: "再输入一次密码",
                   icon: Icon(Icons.lock)),
               validator: ((value) => value!.trim().length > 5
-                  ? (_pwdController.text == _againPwdController.text
+                  ? (widget._pwdController.text !=
+                          widget._againPwdController.text
                       ? "两次密码不相同"
                       : null)
                   : "密码不能少于6位")),
